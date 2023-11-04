@@ -2,12 +2,14 @@ import { cart,
     calculateCartQuantity, 
     removeFromCart, 
     updateQuantity,
-    updateDeliveryOption } from "../cart.js";
+    updateDeliveryOption,
+     } from "../cart.js";
 
-import { products } from "../products.js";
+import { getMatchingProduct } from "../products.js";
 import { formatCurrency } from "../../scripts/utils/money.js";
-import { deliveryOptions } from "../deliveryOptions.js";
+import { deliveryOptions, getDeliveryOption } from "../deliveryOptions.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 export function renderOrderSummary() {
 
@@ -18,26 +20,16 @@ export function renderOrderSummary() {
 
         const productId = cartItem.productId;
 
-        let matchingProduct;
-
-        products.forEach((product) => {
-            if (product.id === productId){
-                matchingProduct = product;
-            }
-        });
+        const matchingProduct = getMatchingProduct(productId);
 
         const deliveryOptionId = cartItem.deliveryOptionId;
 
-        let deliveryOption;
-
-        deliveryOptions.forEach((option) => {
-            if (option.id === deliveryOptionId){
-            deliveryOption = option;
-            }
-        });
+        const deliveryOption = getDeliveryOption(deliveryOptionId);
 
         const today = dayjs();
+
         const deliveryDate = today.add(deliveryOption.deliveryTime, 'days');
+
         const dateString = deliveryDate.format('dddd, MMMM, D');
 
         cartSummaryHTML +=
@@ -138,6 +130,7 @@ export function renderOrderSummary() {
             const container = document.querySelector(`.js-cart-item-container-${productId}`);
             container.remove();
             updateCheckout();
+            renderPaymentSummary();
         });
     })
 
@@ -175,8 +168,7 @@ export function renderOrderSummary() {
         const {productId, deliveryOptionId} = element.dataset;
         updateDeliveryOption(productId, deliveryOptionId);
         renderOrderSummary();
+        renderPaymentSummary();
         })
     })
 }
-
-renderOrderSummary();
