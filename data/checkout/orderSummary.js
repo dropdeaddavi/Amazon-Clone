@@ -161,6 +161,7 @@ export function renderOrderSummary() {
             labelQuantity.innerHTML = newQuantity;
 
             updateCheckout();
+            renderPaymentSummary();
         })
     })
 
