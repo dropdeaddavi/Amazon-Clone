@@ -1,3 +1,5 @@
 export function formatCurrency(priceCents){
-    return (Math.round(priceCents / 100).toFixed(2));
+    let priceCentsRounded = Math.round(priceCents)
+
+    return (priceCentsRounded / 100).toFixed(2);
 }
